@@ -65,8 +65,14 @@ body {
 }
 
 .home-button {
+  border-radius: 8%;
   padding: 5px 10px;
   background-color: lightskyblue;
+}
+
+.home-button:hover {
+  box-shadow: 3px 3px 3px #B22222;
+  transform: translateY(-6px);
 }
 
 .movie-warning {
