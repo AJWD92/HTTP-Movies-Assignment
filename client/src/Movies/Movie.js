@@ -1,48 +1,50 @@
-import React from "react";
-import axios from "axios";
-import MovieCard from "./MovieCard";
-export default class Movie extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      movie: null
+import React, { useState, useEffect } from 'react'
+import axios from 'axios';
+
+import MovieCard from './MovieCard';
+
+import { Button } from 'react-bootstrap';
+
+const Movie = (props ) => {
+    const [movie, setMovie] = useState([]);
+
+    useEffect(() => {
+        axios
+        .get(`http://localhost:5000/movies/${props.params.match.id}`)
+        .then(res => {
+            console.log(res)
+            setMovie(res.data)
+        })
+        .catch(err => console.log(err));
+    }, [props.match.params.id]);
+
+    const deleteMovie = () => {
+        axios
+        .delete(`http://localhost:5000/movies/${props.match.params.id}`, movie)
+        .then(res => {
+            console.log(res)
+            setMovie(res.data)
+        })
+        .catch(err => console.log(err));
     };
-  }
 
-  componentDidMount() {
-    this.fetchMovie(this.props.match.params.id);
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (this.props.match.params.id !== newProps.match.params.id) {
-      this.fetchMovie(newProps.match.params.id);
-    }
-  }
-
-  fetchMovie = id => {
-    axios
-      .get(`http://localhost:5000/api/movies/${id}`)
-      .then(res => this.setState({ movie: res.data }))
-      .catch(err => console.log(err.response));
-  };
-
-  saveMovie = () => {
-    const addToSavedList = this.props.addToSavedList;
-    addToSavedList(this.state.movie);
-  };
-
-  render() {
-    if (!this.state.movie) {
-      return <div>Loading movie information...</div>;
-    }
-
+    
     return (
-      <div className="save-wrapper">
+        <div className="save-wrapper">
         <MovieCard movie={this.state.movie} />
-        <div className="save-button" onClick={this.saveMovie}>
+        <Button variant='outline-primary'  className="save-btn" onClick={this.saveMovie}>
           Save
-        </div>
+        </Button>
+        <Button variant='outline-info' className='edit-btn' onClick={() => this.props.history.push(`update-movie/${this.props.state.movie.id}`)}
+        >
+          Edit
+        </Button>
+        <Button variant='outline-danger' className='del-btn' onClick={this.deleteMovie}>
+          Delete
+        </Button>
       </div>
-    );
-  }
+    )
 }
+
+
+export default Movie

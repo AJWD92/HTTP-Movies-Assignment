@@ -53,13 +53,11 @@ body {
   width: 75%;
   margin: 1rem auto;
 }
-.save-button {
+.save-btn {
   position: absolute;
   top: 25px;
   right: 25px;
-  border: 1px solid grey;
-  padding: 5px 10px;
-  background-color: lightseagreen;
+  
 }
 .save-button:hover {
   background-color: green;
@@ -74,4 +72,15 @@ body {
 .movie-warning {
   color: red;
   text-align: center;
+}
+
+.edit-btn {
+  position: absolute;
+  top: 75px;
+  right: 25px;
+}
+.del-btn {
+  position: absolute;
+  top: 125px;
+  right: 25px;
 }
