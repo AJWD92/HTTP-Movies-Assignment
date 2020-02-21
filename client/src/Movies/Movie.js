@@ -1,48 +1,55 @@
-import React from "react";
-import axios from "axios";
+import React,{useState, useEffect} from "react";
 import MovieCard from "./MovieCard";
-export default class Movie extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      movie: null
-    };
+import { Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom'
+import api from '../utils/api';
+
+const Movie = (props) => {
+  const [movie, setMovie] = useState({
+    id:'',
+    directer:'',
+    title:'',
+    stars:[],
+    metascore:''
+  })
+
+  useEffect(() => {
+    api().get(`/movies/${props.match.params.id}`)
+      .then(res => {
+        setMovie(res.data)
+      })
+      .catch(err => console.log(err));
+  }, [props.match.params.id])
+
+  const deleteMovie = (movie) => {
+    api().delete(`/movies/${props.match.params.id}`, movie)
+      .then(res => {
+        props.history.push(`/`)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
-
-  componentDidMount() {
-    this.fetchMovie(this.props.match.params.id);
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (this.props.match.params.id !== newProps.match.params.id) {
-      this.fetchMovie(newProps.match.params.id);
-    }
-  }
-
-  fetchMovie = id => {
-    axios
-      .get(`http://localhost:5000/api/movies/${id}`)
-      .then(res => this.setState({ movie: res.data }))
-      .catch(err => console.log(err.response));
-  };
-
-  saveMovie = () => {
-    const addToSavedList = this.props.addToSavedList;
-    addToSavedList(this.state.movie);
-  };
-
-  render() {
-    if (!this.state.movie) {
+  if(!movie){
       return <div>Loading movie information...</div>;
     }
-
-    return (
-      <div className="save-wrapper">
-        <MovieCard movie={this.state.movie} />
-        <div className="save-button" onClick={this.saveMovie}>
-          Save
+      return (
+        <div className="save-wrapper">
+            <MovieCard movie={movie} />
+                <Button variant='outline-primary'  className="save-btn">
+                Save
+                </Button>
+                <Link to={`/update-movie/${movie.id}`}>
+                <Button variant='outline-info' className='edit-btn'
+                >
+                Edit
+                </Button>
+                </Link>
+                <Button variant='outline-danger' className='del-btn' onClick={deleteMovie}>
+                Delete
+                </Button>
         </div>
-      </div>
-    );
-  }
+  )
 }
+
+export default Movie;
